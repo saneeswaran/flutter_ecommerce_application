@@ -2,6 +2,9 @@ import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/kids_s
 import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/men_shopping.dart';
 import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/women_shopping.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
+
+import 'tab bar/category/all_category.dart';
 
 class ShopPage extends StatefulWidget {
   const ShopPage({super.key});
@@ -34,13 +37,24 @@ class _ShopPageState extends State<ShopPage>
     tabController.dispose();
   }
 
+  void movetoCategory() {
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeft,
+        duration: const Duration(milliseconds: 400),
+        child: AllCategory(),
+      ),
+    );
+  }
+
   List<String> tabBarTitle = ["Women", "Men", "Kids"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Categories",
           style: TextStyle(
             color: Colors.black,
@@ -48,7 +62,9 @@ class _ShopPageState extends State<ShopPage>
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.search))],
+        actions: [
+          IconButton(onPressed: movetoCategory, icon: Icon(Icons.search)),
+        ],
         bottom: TabBar(
           indicatorColor: Theme.of(context).primaryColor,
           tabs: List.generate(
