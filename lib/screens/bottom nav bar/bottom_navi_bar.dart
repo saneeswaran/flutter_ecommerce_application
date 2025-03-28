@@ -3,7 +3,6 @@ import 'package:cloth_ecommerce_application/screens/favourite%20page/favourite_p
 import 'package:cloth_ecommerce_application/screens/shop%20page/shop_page.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
-import 'package:scroll_to_hide/scroll_to_hide.dart';
 
 import '../home page/home_page.dart';
 import '../profile page/profile_page.dart';
@@ -42,26 +41,20 @@ class _BottomNaviBarState extends State<BottomNaviBar> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        bottomNavigationBar: ScrollToHide(
-          height: kBottomNavigationBarHeight,
-          scrollController: ScrollController(),
-          duration: const Duration(milliseconds: 500),
-          hideDirection: Axis.horizontal,
-          child: PersistentTabView(
-            tabs: List.generate(
-              bottomNavBarPages.length,
-              (index) => PersistentTabConfig(
-                screen: bottomNavBarPages[index],
-                item: ItemConfig(
-                  icon: bottomNavBaricons[index],
-                  title: bottomNavBarTitle[index],
-                ),
+        bottomNavigationBar: PersistentTabView(
+          tabs: List.generate(
+            bottomNavBarPages.length,
+            (index) => PersistentTabConfig(
+              screen: bottomNavBarPages[index],
+              item: ItemConfig(
+                icon: bottomNavBaricons[index],
+                title: bottomNavBarTitle[index],
+                activeForegroundColor: Theme.of(context).primaryColor,
               ),
             ),
-            navBarBuilder:
-                (navBarConfig) =>
-                    Style5BottomNavBar(navBarConfig: navBarConfig),
           ),
+          navBarBuilder:
+              (navBarConfig) => Style1BottomNavBar(navBarConfig: navBarConfig),
         ),
       ),
     );
