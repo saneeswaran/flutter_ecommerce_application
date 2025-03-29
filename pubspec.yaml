@@ -31,11 +31,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
+  flutter_rating: ^2.0.2
   flutter_svg: ^2.0.17
+  like_button: ^2.0.5
   page_transition: ^2.2.1
   persistent_bottom_nav_bar_v2: ^5.3.1
   provider: ^6.1.4
-  flutter_rating: ^2.0.2
 
 dev_dependencies:
   flutter_lints: ^5.0.0

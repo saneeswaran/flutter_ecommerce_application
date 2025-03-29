@@ -1,7 +1,9 @@
 import 'package:cloth_ecommerce_application/constants/constants.dart';
+import 'package:cloth_ecommerce_application/model/fake_model.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
+import 'package:like_button/like_button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -97,7 +99,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _customcardsOfProduct(Size size) {
-    final List<String> networkImagesFortesting = [image4, image5, image6];
+    final List<String> networkImagesFortesting = [
+      image1,
+      image2,
+      image3,
+      image4,
+      image5,
+      image6,
+    ];
     return SizedBox(
       height: size.height * 0.5,
       width: size.width * 1,
@@ -128,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                   child: _insideTheImageWithDiscountAndFavourites(),
                 ),
                 //price details
-                _priceDetails(size),
+                _priceDetails(size, index: index),
               ],
             ),
           );
@@ -138,34 +147,30 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _insideTheImageWithDiscountAndFavourites() {
+    bool isClickedButton = false;
     return Align(
       alignment: Alignment.topRight, // Positions at the top-right
       child: Container(
         width: 28, // Smaller background container
         height: 28, // Smaller background container
         margin: EdgeInsets.all(5), // Adds spacing from the edges
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle, // Circular shape
-          boxShadow: [
-            BoxShadow(color: Colors.black26, blurRadius: 4, spreadRadius: 1),
-          ],
-        ),
-        child: Center(
-          child: InkWell(
-            onTap: () {},
-            child: Icon(
-              Icons.favorite,
-              size: 16, // Smaller icon
-              color: Colors.red,
-            ),
+        child: LikeButton(
+          animationDuration: const Duration(milliseconds: 400),
+          isLiked: isClickedButton,
+          size: 25,
+          circleColor: CircleColor(
+            start: Colors.grey.shade400,
+            end: Colors.grey.shade400,
           ),
+          likeBuilder: (isLiked) {
+            isLiked = isClickedButton;
+          },
         ),
       ),
     );
   }
 
-  Widget _priceDetails(Size size) {
+  Widget _priceDetails(Size size, {required int index}) {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
@@ -178,11 +183,11 @@ class _HomePageState extends State<HomePage> {
             allowHalfRating: true,
           ),
           Text(
-            "Product name",
+            testingfakeModel[index].name,
             style: TextStyle(color: Colors.grey.shade400, fontSize: 18),
           ),
-          const Text(
-            "Product Type",
+          Text(
+            testingfakeModel[index].type,
             style: TextStyle(
               color: Colors.black,
               fontSize: 22,
@@ -193,7 +198,7 @@ class _HomePageState extends State<HomePage> {
             spacing: size.height * 0.02,
             children: [
               Text(
-                "Rs. 200",
+                "${testingfakeModel[index].originalPrice}",
                 style: TextStyle(
                   color: Colors.grey.shade400,
                   decoration: TextDecoration.lineThrough,
@@ -201,7 +206,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Text(
-                'Rs.150',
+                '${testingfakeModel[index].price}',
                 style: TextStyle(
                   color: Theme.of(context).primaryColor,
                   fontSize: 18,

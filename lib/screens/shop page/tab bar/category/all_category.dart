@@ -1,4 +1,6 @@
+import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/category/list_product_by_category.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../../../constants/constants.dart';
 
@@ -13,14 +15,7 @@ class AllCategory extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: const Text(
-          "Categories",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: const Text("Categories", style: categoryShow),
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
@@ -38,7 +33,18 @@ class AllCategory extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              PageTransition(
+                type: PageTransitionType.rightToLeft,
+                duration: const Duration(milliseconds: 400),
+                child: ListProductByCategory(
+                  categoryHeading: clothingCategories[index],
+                ),
+              ),
+            );
+          },
           child: ListTile(
             title: Text(
               clothingCategories[index],
