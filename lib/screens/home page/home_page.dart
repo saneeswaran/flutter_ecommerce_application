@@ -1,5 +1,6 @@
 import 'package:cloth_ecommerce_application/constants/constants.dart';
 import 'package:cloth_ecommerce_application/model/fake_model.dart';
+import 'package:cloth_ecommerce_application/screens/product%20details/product_details_page.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
@@ -122,19 +123,35 @@ class _HomePageState extends State<HomePage> {
                   CrossAxisAlignment.start, // make price details left
               children: [
                 //image content
-                Container(
-                  margin: const EdgeInsets.all(5),
-                  height: size.height * 0.30,
-                  width: size.width * 0.60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                      image: NetworkImage(networkImagesFortesting[index]),
-                      fit: BoxFit.cover,
+                Hero(
+                  tag: networkImagesFortesting[index],
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => ProductDetailsPage(
+                                imageUrl: networkImagesFortesting[index],
+                              ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.all(5),
+                      height: size.height * 0.30,
+                      width: size.width * 0.60,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        image: DecorationImage(
+                          image: NetworkImage(networkImagesFortesting[index]),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      //inside the image content
+                      child: _insideTheImageWithDiscountAndFavourites(),
                     ),
                   ),
-                  //inside the image content
-                  child: _insideTheImageWithDiscountAndFavourites(),
                 ),
                 //price details
                 _priceDetails(size, index: index),
@@ -164,6 +181,7 @@ class _HomePageState extends State<HomePage> {
           ),
           likeBuilder: (isLiked) {
             isLiked = isClickedButton;
+            return null;
           },
         ),
       ),

@@ -123,6 +123,7 @@ class CustomTiles extends StatelessWidget {
       ),
       likeBuilder: (isLiked) {
         isLiked = isClickedButton;
+        return null;
       },
     );
   }
