@@ -1,7 +1,8 @@
-import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/category/components/custom_tiles.dart';
+import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/category/components/custom_list_tiles.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../constants/constants.dart';
+import 'components/custom_grid_Tile.dart';
 import 'components/sort_by_dialogue.dart';
 
 class ListProductByCategory extends StatefulWidget {
@@ -14,6 +15,7 @@ class ListProductByCategory extends StatefulWidget {
 
 class _ListProductByCategoryState extends State<ListProductByCategory> {
   String selectedSort = "Relevance";
+  bool changeListTile = false;
   void sortProducts(String sortType) {
     // setState(() {
     //   selectedSort = sortType;
@@ -42,8 +44,27 @@ class _ListProductByCategoryState extends State<ListProductByCategory> {
             spacing: size.height * 0.01,
             children: [
               _showOthercategory(size),
-              _sortLies(context),
-              CustomTiles(),
+              _sortList(context),
+
+              //change layout methods
+              changeListTile
+                  ? GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: networkImagesFortesting.length,
+
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 5, // Space between columns
+                      childAspectRatio: 0.8, // Adjust width/height ratio
+                      mainAxisExtent:
+                          280, // Control item height (increase for bigger tiles)
+                    ),
+                    itemBuilder: (context, index) {
+                      return CustomGridTile(index: index);
+                    },
+                  )
+                  : CustomListTiles(),
             ],
           ),
         ),
@@ -90,7 +111,7 @@ class _ListProductByCategoryState extends State<ListProductByCategory> {
     );
   }
 
-  Widget _sortLies(BuildContext context) {
+  Widget _sortList(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -106,7 +127,15 @@ class _ListProductByCategoryState extends State<ListProductByCategory> {
           },
           icon: Icons.keyboard_arrow_down,
         ),
-        _filterButtons(title: "", onPressed: () {}, icon: Icons.list),
+        _filterButtons(
+          title: "",
+          onPressed: () {
+            setState(() {
+              changeListTile = !changeListTile;
+            });
+          },
+          icon: changeListTile ? Icons.grid_3x3 : Icons.list,
+        ),
       ],
     );
   }

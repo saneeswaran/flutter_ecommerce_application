@@ -1,105 +1,26 @@
-import 'package:cloth_ecommerce_application/constants/constants.dart';
-import 'package:cloth_ecommerce_application/model/fake_model.dart';
-import 'package:cloth_ecommerce_application/screens/product%20details/product_details_page.dart';
-import 'package:cloth_ecommerce_application/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:like_button/like_button.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+import '../../../../../constants/constants.dart';
+import '../../../../../model/fake_model.dart';
+import '../../../../product details/product_details_page.dart';
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
+class CustomGridTile extends StatelessWidget {
+  final int index;
+  const CustomGridTile({super.key, required this.index});
 
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          spacing: size.height * 0.02, //space between widgets
-          children: [
-            //banner
-            _fashionSale(
-              size,
-              height: 0.60,
-              image: banner,
-              text: "Fashion \nSale",
-            ),
-            _newAndViewAllLine(),
-            _customcardsOfProduct(size),
-            _fashionSale(
-              size,
-              height: 0.50,
-              image: streetCloths,
-              text: "Street Cloths",
-            ),
-            _customcardsOfProduct(size),
-          ],
-        ),
-      ),
-    );
+    return Container(child: _customcardsOfProduct(size, context, index: index));
   }
 
-  Widget _fashionSale(
-    Size size, {
-    required double height,
-    required String image,
-    required String text,
+  Widget _customcardsOfProduct(
+    Size size,
+    BuildContext context, {
+    required int index,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      height: size.height * height,
-      width: size.width * 1,
-      decoration: BoxDecoration(
-        image: DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
-      ),
-      child: Column(
-        spacing: size.height * 0.01,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: size.height * 0.25),
-          Text(
-            text,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-            height: size.height * 0.05,
-            width: size.width * 0.40,
-            child: CustomElevatedButton(onPressed: () {}, text: "Check"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _newAndViewAllLine() {
-    return ListTile(
-      title: const Text(
-        "New",
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(
-        "You've never seen it before",
-        style: TextStyle(color: Colors.grey.shade400),
-      ),
-      trailing: TextButton(
-        onPressed: () {},
-        child: Text("View all", style: const TextStyle(color: Colors.black)),
-      ),
-    );
-  }
-
-  Widget _customcardsOfProduct(Size size) {
     final List<String> networkImagesFortesting = [
       image1,
       image2,
@@ -109,13 +30,11 @@ class _HomePageState extends State<HomePage> {
       image6,
     ];
     return SizedBox(
-      height: size.height * 0.5,
+      height: size.height * 0.36,
       width: size.width * 1,
-      child: ListView.builder(
-        itemCount: networkImagesFortesting.length,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return Card(
+      child: Column(
+        children: [
+          Card(
             color: Colors.white,
             shadowColor: Colors.grey.shade400,
             child: Column(
@@ -142,8 +61,10 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: Container(
                     margin: const EdgeInsets.all(5),
-                    height: size.height * 0.30,
-                    width: size.width * 0.60,
+
+                    //image size
+                    height: size.height * 0.20,
+                    width: size.width * 0.45,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
@@ -156,11 +77,11 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 //price details
-                _priceDetails(size, index: index),
+                _priceDetails(size, context, index: index),
               ],
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
@@ -176,7 +97,7 @@ class _HomePageState extends State<HomePage> {
         child: LikeButton(
           animationDuration: const Duration(milliseconds: 400),
           isLiked: isClickedButton,
-          size: 25,
+          size: 20,
           circleColor: CircleColor(
             start: Colors.grey.shade400,
             end: Colors.grey.shade400,
@@ -190,28 +111,33 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _priceDetails(Size size, {required int index}) {
+  Widget _priceDetails(Size size, BuildContext context, {required int index}) {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //rating bar
-          StarRating(
-            color: Colors.yellow.shade400,
-            rating: 5,
-            allowHalfRating: true,
-            size: 20,
+          Row(
+            //make align star rating at the left side
+            children: [
+              StarRating(
+                color: Colors.yellow.shade400,
+                rating: 5,
+                allowHalfRating: true,
+                size: 15,
+              ),
+            ],
           ),
           Text(
             testingfakeModel[index].name,
-            style: TextStyle(color: Colors.grey.shade400, fontSize: 18),
+            style: TextStyle(color: Colors.grey.shade400),
           ),
           Text(
             testingfakeModel[index].type,
             style: TextStyle(
               color: Colors.black,
-              fontSize: 22,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -223,15 +149,11 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   color: Colors.grey.shade400,
                   decoration: TextDecoration.lineThrough,
-                  fontSize: 18,
                 ),
               ),
               Text(
                 '${testingfakeModel[index].price}',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: 18,
-                ),
+                style: TextStyle(color: Theme.of(context).primaryColor),
               ),
             ],
           ),

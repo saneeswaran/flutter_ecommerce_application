@@ -5,8 +5,8 @@ import 'package:like_button/like_button.dart';
 import '../../../../../constants/constants.dart';
 import '../../../../../model/fake_model.dart';
 
-class CustomTiles extends StatelessWidget {
-  const CustomTiles({super.key});
+class CustomListTiles extends StatelessWidget {
+  const CustomListTiles({super.key});
 
   @override
   Widget build(BuildContext context) {

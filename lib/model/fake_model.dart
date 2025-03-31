@@ -6,6 +6,7 @@ class FakeModel {
   final String type;
   final int originalPrice;
   final double rating;
+  final String description;
   FakeModel({
     required this.name,
     required this.color,
@@ -13,6 +14,7 @@ class FakeModel {
     required this.rating,
     required this.type,
     required this.originalPrice,
+    required this.description,
   });
 }
 
@@ -24,6 +26,8 @@ List<FakeModel> testingfakeModel = [
     rating: 5.0,
     type: "Cosplay",
     originalPrice: 1000,
+    description:
+        "Super Semma Model Mada Koothi.. Maddakudu Madhan attitude guy told he's is not interested in supporting role",
   ),
   FakeModel(
     name: "Eren Yeager Cosplay",
@@ -32,6 +36,8 @@ List<FakeModel> testingfakeModel = [
     rating: 5.0,
     type: "Cosplay",
     originalPrice: 1000,
+    description:
+        "Super Semma Model Mada Koothi.. Maddakudu Madhan attitude guy told he's is not interested in supporting role",
   ),
   FakeModel(
     name: "Sakura Haruka Cosplay",
@@ -40,6 +46,8 @@ List<FakeModel> testingfakeModel = [
     rating: 5.0,
     type: "Cosplay",
     originalPrice: 1000,
+    description:
+        "Super Semma Model Mada Koothi.. Maddakudu Madhan attitude guy told he's is not interested in supporting role",
   ),
   FakeModel(
     name: "Micky Cosplay",
@@ -48,6 +56,8 @@ List<FakeModel> testingfakeModel = [
     rating: 5.0,
     type: "cosplay",
     originalPrice: 1000,
+    description:
+        "Super Semma Model Mada Koothi.. Maddakudu Madhan attitude guy told he's is not interested in supporting role",
   ),
   FakeModel(
     name: "Gojo Cosplay",
@@ -56,6 +66,8 @@ List<FakeModel> testingfakeModel = [
     rating: 5.0,
     type: "Cosplay",
     originalPrice: 1000,
+    description:
+        "Super Semma Model Mada Koothi.. Maddakudu Madhan attitude guy told he's is not interested in supporting role",
   ),
   FakeModel(
     name: "Itachi Cosplay",
@@ -64,5 +76,7 @@ List<FakeModel> testingfakeModel = [
     rating: 5.0,
     type: "Cosplay",
     originalPrice: 1000,
+    description:
+        "Super Semma Model Mada Koothi.. Maddakudu Madhan attitude guy told he's is not interested in supporting role",
   ),
 ];

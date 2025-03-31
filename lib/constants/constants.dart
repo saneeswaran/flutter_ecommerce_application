@@ -13,6 +13,15 @@ const String clothes = 'assets/images/clothes.png';
 const String shoes = 'assets/images/shoes.png';
 
 //sample network images
+
+final List<String> networkImagesFortesting = [
+  image1,
+  image2,
+  image3,
+  image4,
+  image5,
+  image6,
+];
 const String image1 = 'https://img.fruugo.com/product/2/93/1646586932_max.jpg';
 const String image2 =
     'https://m.media-amazon.com/images/I/61p2WolgSGL._SX679_.jpg';
