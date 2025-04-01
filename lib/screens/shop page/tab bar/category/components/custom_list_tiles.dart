@@ -105,14 +105,6 @@ class CustomListTiles extends StatelessWidget {
 
   Widget _favoriteButton() {
     bool isClickedButton = false;
-    // return Material(
-    //   color: Colors.white,
-    //   shape: const CircleBorder(),
-    //   child: IconButton(
-    //     onPressed: () {},
-    //     icon: Icon(Icons.favorite, color: Colors.black),
-    //   ),
-    // );  }
     return LikeButton(
       animationDuration: const Duration(milliseconds: 400),
       isLiked: isClickedButton,
