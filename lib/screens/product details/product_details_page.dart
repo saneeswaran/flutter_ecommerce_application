@@ -1,5 +1,5 @@
 import 'package:cloth_ecommerce_application/constants/constants.dart';
-import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/category/components/custom_grid_Tile.dart';
+import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/category/components/custom_grid_tile.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';

@@ -1,10 +1,13 @@
 import 'package:cloth_ecommerce_application/constants/constants.dart';
 import 'package:cloth_ecommerce_application/model/fake_model.dart';
+import 'package:cloth_ecommerce_application/model/product_model.dart';
+import 'package:cloth_ecommerce_application/providers/product_provider.dart';
 import 'package:cloth_ecommerce_application/screens/product%20details/product_details_page.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:like_button/like_button.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,9 +17,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final List<ProductModel> products = ProductModel.fromJsonList(jsonModelData);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final provider = Provider.of<ProductProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -100,19 +105,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _customcardsOfProduct(Size size) {
-    final List<String> networkImagesFortesting = [
-      image1,
-      image2,
-      image3,
-      image4,
-      image5,
-      image6,
-    ];
     return SizedBox(
       height: size.height * 0.5,
       width: size.width * 1,
       child: ListView.builder(
-        itemCount: networkImagesFortesting.length,
+        itemCount: products.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           return Card(
@@ -147,12 +144,14 @@ class _HomePageState extends State<HomePage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                        image: NetworkImage(networkImagesFortesting[index]),
+                        image: NetworkImage(products[index].imageUrl),
                         fit: BoxFit.cover,
                       ),
                     ),
                     //inside the image content
-                    child: _insideTheImageWithDiscountAndFavourites(),
+                    child: _insideTheImageWithDiscountAndFavourites(
+                      products[index],
+                    ),
                   ),
                 ),
                 //price details
@@ -165,26 +164,36 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _insideTheImageWithDiscountAndFavourites() {
-    bool isClickedButton = false;
+  Widget _insideTheImageWithDiscountAndFavourites(ProductModel product) {
     return Align(
       alignment: Alignment.topRight, // Positions at the top-right
       child: Container(
         width: 28, // Smaller background container
         height: 28, // Smaller background container
         margin: EdgeInsets.all(5), // Adds spacing from the edges
-        child: LikeButton(
-          animationDuration: const Duration(milliseconds: 400),
-          isLiked: isClickedButton,
-          size: 25,
-          circleColor: CircleColor(
-            start: Colors.grey.shade400,
-            end: Colors.grey.shade400,
+        child: Center(
+          child: IconButton(
+            icon: Consumer<ProductProvider>(
+              builder: (context, favourites, child) {
+                final isFavourite = favourites.favourites.containsKey(
+                  product.id,
+                );
+                return Icon(
+                  isFavourite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavourite ? Colors.red : Colors.grey,
+                );
+              },
+            ),
+            onPressed: () {
+              final provider = Provider.of<ProductProvider>(
+                context,
+                listen: false,
+              );
+              provider.isFavouriteCheck(product.id.toString())
+                  ? provider.addToFavourites(product)
+                  : provider.removeFromFavourites(product.id.toString());
+            },
           ),
-          likeBuilder: (isLiked) {
-            isLiked = isClickedButton;
-            return null;
-          },
         ),
       ),
     );
@@ -204,11 +213,11 @@ class _HomePageState extends State<HomePage> {
             size: 20,
           ),
           Text(
-            testingfakeModel[index].name,
+            products[index].name,
             style: TextStyle(color: Colors.grey.shade400, fontSize: 18),
           ),
           Text(
-            testingfakeModel[index].type,
+            products[index].type,
             style: TextStyle(
               color: Colors.black,
               fontSize: 22,
@@ -219,7 +228,7 @@ class _HomePageState extends State<HomePage> {
             spacing: size.height * 0.02,
             children: [
               Text(
-                "${testingfakeModel[index].originalPrice}",
+                "${products[index].originalPrice}",
                 style: TextStyle(
                   color: Colors.grey.shade400,
                   decoration: TextDecoration.lineThrough,
@@ -227,7 +236,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Text(
-                '${testingfakeModel[index].price}',
+                '${products[index].price}',
                 style: TextStyle(
                   color: Theme.of(context).primaryColor,
                   fontSize: 18,

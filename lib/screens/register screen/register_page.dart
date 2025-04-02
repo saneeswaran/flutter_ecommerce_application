@@ -1,5 +1,4 @@
 import 'package:cloth_ecommerce_application/constants/constants.dart';
-import 'package:cloth_ecommerce_application/screens/login%20screen/provider/login_provider.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_elevated_button.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/login_provider.dart';
 import '../bottom nav bar/bottom_navi_bar.dart';
 import '../login screen/login_page.dart';
 

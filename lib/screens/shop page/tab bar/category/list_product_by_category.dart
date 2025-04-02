@@ -2,7 +2,7 @@ import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/catego
 import 'package:flutter/material.dart';
 
 import '../../../../constants/constants.dart';
-import 'components/custom_grid_Tile.dart';
+import 'components/custom_grid_tile.dart';
 import 'components/sort_by_dialogue.dart';
 
 class ListProductByCategory extends StatefulWidget {

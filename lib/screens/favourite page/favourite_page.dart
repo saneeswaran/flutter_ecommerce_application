@@ -1,7 +1,7 @@
-import 'package:cloth_ecommerce_application/constants/constants.dart';
-import 'package:cloth_ecommerce_application/model/fake_model.dart';
+import 'package:cloth_ecommerce_application/providers/product_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
+import 'package:provider/provider.dart';
 
 import '../shop page/tab bar/category/components/sort_by_dialogue.dart';
 
@@ -27,6 +27,8 @@ class _FavouritePageState extends State<FavouritePage> {
   String selectedSort = "Relevance";
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ProductProvider>(context);
+    final favourites = provider.favourites.values.toList();
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -36,22 +38,29 @@ class _FavouritePageState extends State<FavouritePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _sortList(context),
-            ListView.builder(
-              itemCount: networkImagesFortesting.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              itemBuilder: (context, index) {
-                return _favouriteList(size, index);
-              },
-            ),
-          ],
-        ),
-      ),
+      body:
+          favourites.isEmpty
+              ? _noFavList()
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _sortList(context),
+                    ListView.builder(
+                      itemCount: favourites.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: (context, index) {
+                        return _favouriteList(
+                          size: size,
+                          index: index,
+                          provider: provider,
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
     );
   }
 
@@ -104,7 +113,11 @@ class _FavouritePageState extends State<FavouritePage> {
     );
   }
 
-  Container _favouriteList(Size size, int index) {
+  Container _favouriteList({
+    required Size size,
+    required int index,
+    required ProductProvider provider,
+  }) {
     return Container(
       //outside container
       margin: const EdgeInsets.all(10),
@@ -124,19 +137,26 @@ class _FavouritePageState extends State<FavouritePage> {
             width: size.width * 0.30,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(networkImagesFortesting[index]),
+                image: NetworkImage(
+                  provider.favourites.values.toList()[index].imageUrl,
+                ),
                 fit: BoxFit.contain,
               ),
             ),
           ),
-          _productDetails(size, index: index),
+          _productDetails(size: size, index: index, provider: provider),
           _favouriteButton(size),
         ],
       ),
     );
   }
 
-  Widget _productDetails(Size size, {required int index}) {
+  Widget _productDetails({
+    required Size size,
+    required int index,
+    required ProductProvider provider,
+  }) {
+    final product = provider.favourites.values.toList()[index];
     return Container(
       height: size.height * 0.15,
       width: size.width * 0.52,
@@ -146,34 +166,25 @@ class _FavouritePageState extends State<FavouritePage> {
         spacing: size.height * 0.01,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            testingfakeModel[index].name,
-            style: TextStyle(color: Colors.grey.shade700),
-          ),
-          Text(
-            testingfakeModel[index].type,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          Text(product.name, style: TextStyle(color: Colors.grey.shade700)),
+          Text(product.type, style: TextStyle(fontWeight: FontWeight.bold)),
           Row(
             spacing: size.width * 0.03,
             children: [
               _customRichText(
                 text: "Color: ",
-                productDetailText: testingfakeModel[index].color,
+                productDetailText: product.color,
               ),
-              _customRichText(
-                text: "Size: ",
-                productDetailText: testingfakeModel[index].size,
-              ),
+              _customRichText(text: "Size: ", productDetailText: product.size),
             ],
           ),
           Row(
             spacing: size.width * 0.05,
             children: [
-              Text("${testingfakeModel[index].price}"),
+              Text("${product.price}"),
               StarRating(
                 allowHalfRating: true,
-                rating: 5,
+                rating: product.rating,
                 color: Colors.yellow.shade400,
                 size: 15,
               ),
@@ -235,6 +246,15 @@ class _FavouritePageState extends State<FavouritePage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _noFavList() {
+    return Center(
+      child: Text(
+        "Product Add Pandra Skoothi",
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }
