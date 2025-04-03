@@ -1,5 +1,7 @@
+import 'package:cloth_ecommerce_application/providers/product_provider.dart';
 import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/category/components/custom_list_tiles.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../constants/constants.dart';
 import 'components/custom_grid_tile.dart';
@@ -30,6 +32,8 @@ class _ListProductByCategoryState extends State<ListProductByCategory> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ProductProvider>(context);
+    final products = provider.items;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -51,7 +55,7 @@ class _ListProductByCategoryState extends State<ListProductByCategory> {
                   ? GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: networkImagesFortesting.length,
+                    itemCount: products.length,
 
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,

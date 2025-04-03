@@ -1,27 +1,34 @@
-import 'package:cloth_ecommerce_application/constants/constants.dart';
+import 'package:cloth_ecommerce_application/model/product_model.dart';
+import 'package:cloth_ecommerce_application/providers/product_provider.dart';
 import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/category/components/custom_grid_tile.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:like_button/like_button.dart';
+import 'package:provider/provider.dart';
 
+import '../../widgets/custom_snack_bar.dart';
 import 'components/custom_drop_down.dart';
 
 class ProductDetailsPage extends StatefulWidget {
+  final int id;
   final String imageUrl;
   final String color;
   final String name;
   final int price;
   final double rating;
   final String description;
+  final bool isLiked;
   const ProductDetailsPage({
     super.key,
+    required this.id,
     required this.imageUrl,
     required this.color,
     required this.name,
     required this.price,
     required this.rating,
     required this.description,
+    required this.isLiked,
   });
 
   @override
@@ -31,9 +38,10 @@ class ProductDetailsPage extends StatefulWidget {
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   String? selectedDressSize;
   String? selectedDressColor;
-  bool isClickedButton = false;
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ProductProvider>(context);
+    final products = provider.items;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
@@ -59,7 +67,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: size.height * 0.02,
                 children: [
-                  _sizeAndColorAndfavourites(),
+                  _sizeAndColorAndfavourites(product: products[widget.id]),
                   _productDetails(),
                   _description(),
 
@@ -67,9 +75,20 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   SizedBox(
                     height: size.height * 0.07,
                     width: size.width * 1,
-                    child: CustomElevatedButton(
-                      onPressed: () {},
-                      text: "Add to cart",
+                    child: Consumer<ProductProvider>(
+                      builder: (context, cart, child) {
+                        final isInCart = cart.cart.any(
+                          (element) => element.id == widget.id,
+                        );
+                        return CustomElevatedButton(
+                          onPressed: () {
+                            if (!isInCart) {
+                              cart.addToCart(products[widget.id]);
+                            }
+                          },
+                          text: "Add to cart",
+                        );
+                      },
                     ),
                   ),
                   _alsoLikeSameModel(),
@@ -78,7 +97,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     width: size.width * 1,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: networkImagesFortesting.length,
+                      itemCount: products.length,
                       itemBuilder: (context, index) {
                         return SizedBox(
                           height: size.height * 0.40,
@@ -115,11 +134,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     );
   }
 
-  Row _sizeAndColorAndfavourites() {
+  Row _sizeAndColorAndfavourites({required ProductModel product}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         CustomDropDown(
+          text: "Select Size",
           value: selectedDressSize,
           dropDownValues: ['S', 'M', 'L', 'XL', 'XXL'],
           onChanged:
@@ -128,6 +148,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               }),
         ),
         CustomDropDown(
+          text: "Select Color",
           value: selectedDressColor,
           dropDownValues: ['Blue', 'Red', 'Yellow', 'Black'],
           onChanged:
@@ -135,17 +156,28 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 selectedDressColor = value;
               }),
         ),
-        LikeButton(
-          animationDuration: const Duration(milliseconds: 400),
-          isLiked: isClickedButton,
-          size: 25,
-          circleColor: CircleColor(
-            start: Colors.grey.shade400,
-            end: Colors.grey.shade400,
-          ),
-          likeBuilder: (isLiked) {
-            isLiked = isClickedButton;
-            return null;
+        Consumer<ProductProvider>(
+          builder: (context, favourite, child) {
+            bool isFav = favourite.isFavCheck(product.id);
+            return LikeButton(
+              animationDuration: const Duration(milliseconds: 400),
+              isLiked: isFav,
+              size: 20,
+              circleColor: CircleColor(
+                start: Colors.grey.shade400,
+                end: Colors.grey.shade400,
+              ),
+              onTap: (liked) async {
+                if (liked) {
+                  favourite.removeFromFavourites(product.id);
+                  failedSnackBar(text: "successfully removed from favourites");
+                } else {
+                  favourite.addToFavourites(product);
+                  successSnackBar(text: "successfully added to favourites");
+                }
+                return !liked;
+              },
+            );
           },
         ),
       ],

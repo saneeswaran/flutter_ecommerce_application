@@ -1,7 +1,10 @@
 import 'package:cloth_ecommerce_application/constants/constants.dart';
 import 'package:cloth_ecommerce_application/core/colors.dart';
+import 'package:cloth_ecommerce_application/model/product_model.dart';
+import 'package:cloth_ecommerce_application/providers/product_provider.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BagPage extends StatefulWidget {
   const BagPage({super.key});
@@ -15,6 +18,8 @@ class _BagPageState extends State<BagPage> {
   final TextEditingController _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ProductProvider>(context);
+    final cart = provider.cart;
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
@@ -26,7 +31,15 @@ class _BagPageState extends State<BagPage> {
       child: Scaffold(
         backgroundColor: scaffoldBackgroundColor,
         appBar: _appBar(),
-        body: _bagProducts(size),
+        body:
+            cart.isEmpty
+                ? Center(
+                  child: Text(
+                    "Product add pandra loosu koothi",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                )
+                : _bagProducts(size, cart: cart, provider: provider),
       ),
     );
   }
@@ -86,7 +99,11 @@ class _BagPageState extends State<BagPage> {
     );
   }
 
-  Widget _bagProducts(Size size) {
+  Widget _bagProducts(
+    Size size, {
+    required List cart,
+    required ProductProvider provider,
+  }) {
     return Column(
       children: [
         Container(
@@ -96,7 +113,7 @@ class _BagPageState extends State<BagPage> {
           color: scaffoldBackgroundColor,
           //list of contents
           child: ListView.builder(
-            itemCount: 4,
+            itemCount: cart.length,
             shrinkWrap: true,
             physics: const ScrollPhysics(),
             itemBuilder: (context, index) {
@@ -108,7 +125,12 @@ class _BagPageState extends State<BagPage> {
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.white,
                 ),
-                child: _productDetails(size, index: index),
+                child: _productDetails(
+                  size,
+                  index: index,
+                  cart: cart[index],
+                  provider: provider,
+                ),
               );
             },
           ),
@@ -118,7 +140,12 @@ class _BagPageState extends State<BagPage> {
     );
   }
 
-  Widget _productDetails(Size size, {required int index}) {
+  Widget _productDetails(
+    Size size, {
+    required int index,
+    required ProductModel cart,
+    required ProductProvider provider,
+  }) {
     return Row(
       children: [
         //image container
@@ -129,18 +156,21 @@ class _BagPageState extends State<BagPage> {
           width: size.width * 0.30,
           //image
           decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(networkImagesFortesting[index]),
-            ),
+            image: DecorationImage(image: NetworkImage(cart.imageUrl)),
           ),
         ),
-        _priceDetails(size),
-        _priceWithQuantityAndDelete(size),
+        _priceDetails(size, cart: cart, index: index, provider: provider),
+        _priceWithQuantityAndDelete(size, provider: provider, product: cart),
       ],
     );
   }
 
-  Widget _priceDetails(Size size) {
+  Widget _priceDetails(
+    Size size, {
+    required ProductModel cart,
+    required int index,
+    required ProductProvider provider,
+  }) {
     return Container(
       height: size.height * 0.15,
       width: size.width * 0.45,
@@ -150,17 +180,17 @@ class _BagPageState extends State<BagPage> {
         crossAxisAlignment: CrossAxisAlignment.start, //make alignment at start
         children: [
           Text(
-            "Item name",
+            cart.name,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Row(
             spacing: size.width * 0.05,
             children: [
-              _customRichText(text: "Color: ", productDetailText: "Black"),
-              _customRichText(text: "Size: ", productDetailText: "L"),
+              _customRichText(text: "Color: ", productDetailText: cart.color),
+              _customRichText(text: "Size: ", productDetailText: cart.size),
             ],
           ),
-          _quantityCounter(size),
+          _quantityCounter(size, cart: cart, provider: provider),
         ],
       ),
     );
@@ -190,13 +220,32 @@ class _BagPageState extends State<BagPage> {
     );
   }
 
-  Widget _quantityCounter(Size size) {
+  Widget _quantityCounter(
+    Size size, {
+    required ProductModel cart,
+    required ProductProvider provider,
+  }) {
     return Row(
       spacing: size.width * 0.03,
       children: [
-        _quantityContainer(size, icon: Icons.remove, onPressed: () {}),
-        Text("1", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        _quantityContainer(size, icon: Icons.add, onPressed: () {}),
+        _quantityContainer(
+          size,
+          icon: Icons.remove,
+          onPressed: () {
+            provider.decreaseQuanitity(cart.id);
+          },
+        ),
+        Text(
+          '${cart.quantity}',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        _quantityContainer(
+          size,
+          icon: Icons.add,
+          onPressed: () {
+            provider.increseQuanitity(cart.id, cart.stock);
+          },
+        ),
       ],
     );
   }
@@ -261,7 +310,11 @@ class _BagPageState extends State<BagPage> {
     );
   }
 
-  Widget _priceWithQuantityAndDelete(Size size) {
+  Widget _priceWithQuantityAndDelete(
+    Size size, {
+    required ProductProvider provider,
+    required ProductModel product,
+  }) {
     return SizedBox(
       height: size.height * 0.15,
       width: size.width * 0.15,
@@ -273,7 +326,9 @@ class _BagPageState extends State<BagPage> {
             width: size.width * 0.09,
             alignment: Alignment.topRight,
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                provider.removeCart(product.id);
+              },
               icon: Icon(Icons.delete, color: buttonColor),
               tooltip: "Remove from cart",
               iconSize: 20,

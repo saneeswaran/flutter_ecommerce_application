@@ -1,62 +1,61 @@
 import 'package:cloth_ecommerce_application/model/product_model.dart';
+import 'package:cloth_ecommerce_application/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 
 class ProductProvider extends ChangeNotifier {
-  //values
-  final Map<dynamic, ProductModel> _items = {};
-  final Map<dynamic, ProductModel> _favourites = {};
+  final List<ProductModel> _items = ProductModel.sampleProductData;
+  final List<ProductModel> _cart = [];
+  final List<ProductModel> _favourites = [];
 
-  Map<dynamic, ProductModel> get items => _items;
-  Map<dynamic, ProductModel> get favourites => _favourites;
+  List<ProductModel> get items => _items;
+  List<ProductModel> get favourite => _favourites;
+  List<ProductModel> get cart => _cart;
 
-  //get item length
-  int get itemCount => _items.length;
-
-  //total price
-  double get totalPrice {
-    return _items.values.fold(0, (sum, item) {
-      double finalPrice =
-          item.isOnSale
-              ? item.price * (1 - item.discountPercentage / 100)
-              : item.price;
-      return sum += finalPrice;
-    });
+  //cart
+  void addToCart(ProductModel product) {
+    _cart.add(product.copyWith(quantity: 1));
+    notifyListeners();
   }
 
-  //add product
-  void addProduct(ProductModel product) {
-    if (_items.containsKey(product.id)) {
-      _items[product.id]!.quantity += 1;
+  void increseQuanitity(int id, int maxStock) {
+    int index = _cart.indexWhere((element) => element.id == id);
+    if (index == -1) return;
+    if (_cart[index].quantity < maxStock) {
+      _cart[index] = _cart[index].copyWith(quantity: _cart[index].quantity + 1);
     } else {
-      _items[product.id] = product;
+      failedSnackBar(text: "Stock limit reacher");
     }
     notifyListeners();
   }
 
-  //remove from cart
-  void removeProductfromCart(ProductModel product) {
-    _items.remove(product.id);
+  void decreaseQuanitity(int id) {
+    final index = _cart.indexWhere((element) => element.id == id);
+    if (_cart[index].quantity == 1) return;
+    _cart[index] = _cart[index].copyWith(quantity: _cart[index].quantity - 1);
+
     notifyListeners();
   }
 
-  void clearCart() {
-    _items.clear();
+  void removeCart(int id) {
+    _cart.removeWhere((element) => element.id == id);
     notifyListeners();
   }
+
+  //favourites
 
   void addToFavourites(ProductModel product) {
-    if (!_favourites.containsKey(product.id)) {
-      _favourites[product.id] = product;
+    if (!_favourites.contains(product)) {
+      _favourites.add(product);
+      notifyListeners();
     }
+  }
+
+  void removeFromFavourites(int id) {
+    _favourites.removeWhere((product) => product.id == id);
     notifyListeners();
   }
 
-  void removeFromFavourites(String productID) {
-    _favourites.remove(productID);
-    notifyListeners();
-  }
-
-  bool isFavouriteCheck(String productId) {
-    return _favourites.containsKey(productId);
+  bool isFavCheck(int id) {
+    return _favourites.any((product) => product.id == id);
   }
 }

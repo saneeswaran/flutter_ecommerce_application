@@ -1,65 +1,85 @@
+import 'package:cloth_ecommerce_application/providers/product_provider.dart';
+import 'package:cloth_ecommerce_application/screens/product%20details/product_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:like_button/like_button.dart';
-
-import '../../../../../constants/constants.dart';
-import '../../../../../model/fake_model.dart';
+import 'package:provider/provider.dart';
+import '../../../../../model/product_model.dart';
+import '../../../../../widgets/custom_snack_bar.dart';
 
 class CustomListTiles extends StatelessWidget {
   const CustomListTiles({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<String> networkImagesFortesting = [
-      image1,
-      image2,
-      image3,
-      image4,
-      image5,
-      image6,
-    ];
+    final provider = Provider.of<ProductProvider>(context);
+    final products = provider.items;
     Size size = MediaQuery.of(context).size;
     return ListView.builder(
-      itemCount: networkImagesFortesting.length,
+      itemCount: products.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        return Container(
-          //outside container
-          margin: const EdgeInsets.all(10),
-          height: size.height * 0.15,
-          width: size.width * 1,
-          decoration: BoxDecoration(
-            //  color: Colors.red, --> for testing layouts
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // image container
-              Container(
-                height: size.height * 0.15,
-                width: size.width * 0.30,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(networkImagesFortesting[index]),
-                    fit: BoxFit.contain,
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => ProductDetailsPage(
+                      id: products[index].id,
+                      color: products[index].color,
+                      description: products[index].description,
+                      imageUrl: products[index].imageUrl,
+                      name: products[index].name,
+                      isLiked: products[index].isLiked,
+                      price: products[index].price.toInt(),
+                      rating: products[index].rating,
+                    ),
+              ),
+            );
+          },
+          child: Container(
+            //outside container
+            margin: const EdgeInsets.all(10),
+            height: size.height * 0.15,
+            width: size.width * 1,
+            decoration: BoxDecoration(
+              //  color: Colors.red, --> for testing layouts
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // image container
+                Container(
+                  height: size.height * 0.15,
+                  width: size.width * 0.30,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(products[index].imageUrl),
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
-              ),
 
-              ///price details
-              _priceDetails(size, index: index),
-              _favoriteButton(),
-            ],
+                ///price details
+                _priceDetails(size, index: index, products: products[index]),
+                _favoriteButton(product: products[index], provider: provider),
+              ],
+            ),
           ),
         );
       },
     );
   }
 
-  Widget _priceDetails(Size size, {required int index}) {
+  Widget _priceDetails(
+    Size size, {
+    required int index,
+    required ProductModel products,
+  }) {
     const TextStyle productNameStyle = TextStyle(fontWeight: FontWeight.bold);
     final TextStyle productColorStyle = TextStyle(
       color: Colors.grey.shade400,
@@ -83,8 +103,8 @@ class CustomListTiles extends StatelessWidget {
         spacing: size.height * 0.001,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(testingfakeModel[index].name, style: productNameStyle),
-          Text(testingfakeModel[index].color, style: productColorStyle),
+          Text(products.name, style: productNameStyle),
+          Text(products.color, style: productColorStyle),
           Row(
             // used row for align star rating at the left side
             children: [
@@ -97,25 +117,38 @@ class CustomListTiles extends StatelessWidget {
               ),
             ],
           ),
-          Text("${testingfakeModel[index].price}", style: productPriceStyle),
+          Text("${products.price}", style: productPriceStyle),
         ],
       ),
     );
   }
 
-  Widget _favoriteButton() {
-    bool isClickedButton = false;
-    return LikeButton(
-      animationDuration: const Duration(milliseconds: 400),
-      isLiked: isClickedButton,
-      size: 25,
-      circleColor: CircleColor(
-        start: Colors.grey.shade400,
-        end: Colors.grey.shade400,
-      ),
-      likeBuilder: (isLiked) {
-        isLiked = isClickedButton;
-        return null;
+  Widget _favoriteButton({
+    required ProductProvider provider,
+    required ProductModel product,
+  }) {
+    return Consumer<ProductProvider>(
+      builder: (context, favourite, child) {
+        bool isFav = favourite.isFavCheck(product.id);
+        return LikeButton(
+          animationDuration: const Duration(milliseconds: 400),
+          isLiked: isFav,
+          size: 20,
+          circleColor: CircleColor(
+            start: Colors.grey.shade400,
+            end: Colors.grey.shade400,
+          ),
+          onTap: (liked) async {
+            if (liked) {
+              favourite.removeFromFavourites(product.id);
+              failedSnackBar(text: "successfully removed from favourites");
+            } else {
+              favourite.addToFavourites(product);
+              successSnackBar(text: "successfully added to favourites");
+            }
+            return !liked;
+          },
+        );
       },
     );
   }

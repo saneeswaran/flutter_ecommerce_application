@@ -1,13 +1,14 @@
 import 'package:cloth_ecommerce_application/constants/constants.dart';
-import 'package:cloth_ecommerce_application/model/fake_model.dart';
 import 'package:cloth_ecommerce_application/model/product_model.dart';
-import 'package:cloth_ecommerce_application/providers/product_provider.dart';
 import 'package:cloth_ecommerce_application/screens/product%20details/product_details_page.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_elevated_button.dart';
+import 'package:cloth_ecommerce_application/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
+
+import '../../providers/product_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,11 +18,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<ProductModel> products = ProductModel.fromJsonList(jsonModelData);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     final provider = Provider.of<ProductProvider>(context);
+    final products = provider.items;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -36,14 +37,14 @@ class _HomePageState extends State<HomePage> {
               text: "Fashion \nSale",
             ),
             _newAndViewAllLine(),
-            _customcardsOfProduct(size),
+            _customcardsOfProduct(size, products: products),
             _fashionSale(
               size,
               height: 0.50,
               image: streetCloths,
               text: "Street Cloths",
             ),
-            _customcardsOfProduct(size),
+            _customcardsOfProduct(size, products: products),
           ],
         ),
       ),
@@ -104,7 +105,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _customcardsOfProduct(Size size) {
+  Widget _customcardsOfProduct(
+    Size size, {
+    required List<ProductModel> products,
+  }) {
     return SizedBox(
       height: size.height * 0.5,
       width: size.width * 1,
@@ -127,12 +131,14 @@ class _HomePageState extends State<HomePage> {
                       MaterialPageRoute(
                         builder:
                             (context) => ProductDetailsPage(
-                              imageUrl: networkImagesFortesting[index],
-                              name: testingfakeModel[index].name,
-                              color: testingfakeModel[index].color,
-                              price: testingfakeModel[index].price,
-                              rating: testingfakeModel[index].rating,
-                              description: testingfakeModel[index].description,
+                              id: products[index].id,
+                              isLiked: products[index].isLiked,
+                              imageUrl: products[index].imageUrl,
+                              name: products[index].name,
+                              color: products[index].color,
+                              price: products[index].price.toInt(),
+                              rating: products[index].rating,
+                              description: products[index].description,
                             ),
                       ),
                     );
@@ -150,12 +156,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                     //inside the image content
                     child: _insideTheImageWithDiscountAndFavourites(
-                      products[index],
+                      index: index,
+                      product: products[index],
                     ),
                   ),
                 ),
                 //price details
-                _priceDetails(size, index: index),
+                _priceDetails(size, index: index, products: products),
               ],
             ),
           );
@@ -164,7 +171,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _insideTheImageWithDiscountAndFavourites(ProductModel product) {
+  Widget _insideTheImageWithDiscountAndFavourites({
+    required int index,
+    required ProductModel product,
+  }) {
     return Align(
       alignment: Alignment.topRight, // Positions at the top-right
       child: Container(
@@ -172,26 +182,30 @@ class _HomePageState extends State<HomePage> {
         height: 28, // Smaller background container
         margin: EdgeInsets.all(5), // Adds spacing from the edges
         child: Center(
-          child: IconButton(
-            icon: Consumer<ProductProvider>(
-              builder: (context, favourites, child) {
-                final isFavourite = favourites.favourites.containsKey(
-                  product.id,
-                );
-                return Icon(
-                  isFavourite ? Icons.favorite : Icons.favorite_border,
-                  color: isFavourite ? Colors.red : Colors.grey,
-                );
-              },
-            ),
-            onPressed: () {
-              final provider = Provider.of<ProductProvider>(
-                context,
-                listen: false,
+          child: Consumer<ProductProvider>(
+            builder: (context, favourite, child) {
+              bool isFav = favourite.isFavCheck(product.id);
+              return LikeButton(
+                animationDuration: const Duration(milliseconds: 400),
+                isLiked: isFav,
+                size: 20,
+                circleColor: CircleColor(
+                  start: Colors.grey.shade400,
+                  end: Colors.grey.shade400,
+                ),
+                onTap: (liked) async {
+                  if (liked) {
+                    favourite.removeFromFavourites(product.id);
+                    failedSnackBar(
+                      text: "successfully removed from favourites",
+                    );
+                  } else {
+                    favourite.addToFavourites(product);
+                    successSnackBar(text: "successfully added to favourites");
+                  }
+                  return !liked;
+                },
               );
-              provider.isFavouriteCheck(product.id.toString())
-                  ? provider.addToFavourites(product)
-                  : provider.removeFromFavourites(product.id.toString());
             },
           ),
         ),
@@ -199,7 +213,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _priceDetails(Size size, {required int index}) {
+  Widget _priceDetails(
+    Size size, {
+    required int index,
+    required List<ProductModel> products,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(

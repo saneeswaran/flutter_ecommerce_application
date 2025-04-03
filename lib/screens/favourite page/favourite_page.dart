@@ -1,4 +1,5 @@
 import 'package:cloth_ecommerce_application/providers/product_provider.dart';
+import 'package:cloth_ecommerce_application/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +29,7 @@ class _FavouritePageState extends State<FavouritePage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ProductProvider>(context);
-    final favourites = provider.favourites.values.toList();
+    final favourites = provider.favourite;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -137,15 +138,13 @@ class _FavouritePageState extends State<FavouritePage> {
             width: size.width * 0.30,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(
-                  provider.favourites.values.toList()[index].imageUrl,
-                ),
+                image: NetworkImage(provider.favourite[index].imageUrl),
                 fit: BoxFit.contain,
               ),
             ),
           ),
           _productDetails(size: size, index: index, provider: provider),
-          _favouriteButton(size),
+          _favouriteButton(size, provider: provider, index: index),
         ],
       ),
     );
@@ -156,7 +155,8 @@ class _FavouritePageState extends State<FavouritePage> {
     required int index,
     required ProductProvider provider,
   }) {
-    final product = provider.favourites.values.toList()[index];
+    final product = provider.favourite.elementAt(index);
+
     return Container(
       height: size.height * 0.15,
       width: size.width * 0.52,
@@ -219,7 +219,11 @@ class _FavouritePageState extends State<FavouritePage> {
     );
   }
 
-  Widget _favouriteButton(Size size) {
+  Widget _favouriteButton(
+    Size size, {
+    required ProductProvider provider,
+    required int index,
+  }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -227,7 +231,10 @@ class _FavouritePageState extends State<FavouritePage> {
           width: size.width * 0.09,
           alignment: Alignment.topRight,
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              provider.removeFromFavourites(provider.favourite[index].id);
+              successSnackBar(text: "Product removed successfully");
+            },
             icon: Icon(Icons.delete),
             tooltip: "Remove from faourites",
             iconSize: 20,
@@ -238,7 +245,10 @@ class _FavouritePageState extends State<FavouritePage> {
           decoration: BoxDecoration(color: Colors.pink, shape: BoxShape.circle),
           alignment: Alignment.topRight,
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              provider.favourite[index].quantity = 1;
+              successSnackBar(text: "Product added to cart successfully");
+            },
             icon: Icon(Icons.shopping_cart),
             tooltip: "Add to Cart",
             color: Colors.white,
@@ -252,7 +262,7 @@ class _FavouritePageState extends State<FavouritePage> {
   Widget _noFavList() {
     return Center(
       child: Text(
-        "Product Add Pandra Skoothi",
+        "Product Like Pandra Skoothi",
         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
       ),
     );

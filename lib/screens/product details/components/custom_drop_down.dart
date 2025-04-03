@@ -4,18 +4,20 @@ class CustomDropDown extends StatelessWidget {
   final List<String> dropDownValues;
   final String? value;
   final Function(String?) onChanged;
+  final String text;
   const CustomDropDown({
     super.key,
     required this.dropDownValues,
     this.value,
     required this.onChanged,
+    required this.text,
   });
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      width: size.height * 0.17,
+      width: size.height * 0.18,
       padding: EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -27,7 +29,7 @@ class CustomDropDown extends StatelessWidget {
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: value,
-          hint: Text("Select Size", style: TextStyle(fontSize: 16)),
+          hint: Text(text, style: TextStyle(fontSize: 16)),
           isExpanded: true,
 
           icon: Icon(Icons.arrow_drop_down),

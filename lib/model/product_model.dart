@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:cloth_ecommerce_application/constants/constants.dart';
+import '../constants/constants.dart';
 
 class ProductModel {
   final int id;
@@ -8,6 +7,7 @@ class ProductModel {
   final String description;
   final double price;
   final int categoryId;
+  final int stock;
   final String imageUrl;
   int quantity;
   final String size;
@@ -19,7 +19,6 @@ class ProductModel {
   final bool isOnSale;
   final int discountPercentage;
   final DateTime createdAt;
-
   ProductModel({
     required this.id,
     required this.name,
@@ -27,176 +26,197 @@ class ProductModel {
     required this.price,
     required this.categoryId,
     required this.imageUrl,
-    required this.quantity,
+    this.quantity = 1,
     required this.size,
+    required this.stock,
     required this.type,
     required this.color,
     required this.rating,
+    required this.isLiked,
     required this.originalPrice,
     required this.isOnSale,
-    this.isLiked = false,
     required this.discountPercentage,
     required this.createdAt,
   });
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) {
+  ProductModel copyWith({int? quantity}) {
     return ProductModel(
-      id: json['id'] ?? 0, // Default to 0 if null
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      price: (json['price'] ?? 0).toDouble(),
-      categoryId: json['category_id'] ?? 0,
-      imageUrl: json['image_url'] ?? '',
-      quantity: json['stock_quantity'] ?? 0,
-      size: json['size'] ?? '',
-      type: json['type'] ?? '',
-      color: json['color'] ?? '',
-      isLiked: json['is_liked'] ?? false,
-      rating:
-          double.tryParse(json['rating'].toString()) ??
-          0.0, // Handle rating safely
-      originalPrice:
-          int.tryParse(json['original_price'].toString()) ??
-          0, // Handle price safely
-      isOnSale: json['is_on_sale'] == 1,
-      discountPercentage: json['discount_percentage'] ?? 0,
-      createdAt:
-          json['created_at'] != null
-              ? DateTime.tryParse(json['created_at']) ?? DateTime.now()
-              : DateTime.now(),
+      id: id,
+      name: name,
+      imageUrl: imageUrl,
+      price: price,
+      quantity: quantity ?? this.quantity,
+      categoryId: categoryId,
+      color: color,
+      stock: stock,
+      createdAt: createdAt,
+      description: description,
+      discountPercentage: discountPercentage,
+      isLiked: isLiked,
+      isOnSale: isOnSale,
+      originalPrice: originalPrice,
+      rating: rating,
+      size: size,
+      type: type,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
       'id': id,
       'name': name,
       'description': description,
       'price': price,
-      'category_id': categoryId,
-      'image_url': imageUrl,
-      'stock_quantity': quantity,
+      'categoryId': categoryId,
+      'imageUrl': imageUrl,
+      'quantity': quantity,
+      'stock': stock,
       'size': size,
       'type': type,
       'color': color,
       'rating': rating,
-      'original_price': originalPrice,
-      'is_on_sale': isOnSale ? 1 : 0,
-      'discount_percentage': discountPercentage,
-      'created_at': createdAt.toIso8601String(),
+      'isLiked': isLiked,
+      'originalPrice': originalPrice,
+      'isOnSale': isOnSale,
+      'discountPercentage': discountPercentage,
+      'createdAt': createdAt.millisecondsSinceEpoch,
     };
   }
 
-  static List<ProductModel> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((json) => ProductModel.fromJson(json)).toList();
+  factory ProductModel.fromMap(Map<String, dynamic> map) {
+    return ProductModel(
+      id: map['id'] as int,
+      name: map['name'] as String,
+      description: map['description'] as String,
+      price: map['price'] as double,
+      categoryId: map['categoryId'] as int,
+      imageUrl: map['imageUrl'] as String,
+      quantity: map['quantity'] as int,
+      size: map['size'] as String,
+      type: map['type'] as String,
+      stock: map['stock'] as int,
+      color: map['color'] as String,
+      rating: map['rating'] as double,
+      isLiked: map['isLiked'] as bool,
+      originalPrice: map['originalPrice'] as int,
+      isOnSale: map['isOnSale'] as bool,
+      discountPercentage: map['discountPercentage'] as int,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
+    );
   }
 
-  static String toJsonList(List<ProductModel> products) {
-    return jsonEncode(products.map((product) => product.toJson()).toList());
-  }
+  String toJson() => json.encode(toMap());
+
+  factory ProductModel.fromJson(String source) =>
+      ProductModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  static List<ProductModel> sampleProductData = [
+    ProductModel(
+      id: 0,
+      name: "Geto",
+      description: "Madddagudu Madhan",
+      price: 600,
+      categoryId: 2,
+      imageUrl: image1,
+      stock: 10,
+      size: "L",
+      type: "Cosplay",
+      color: "Black",
+      rating: 5.0,
+      isLiked: false,
+      originalPrice: 1500,
+      isOnSale: true,
+      discountPercentage: 20,
+      createdAt: DateTime.now(),
+    ),
+    ProductModel(
+      id: 1,
+      name: "Eren yeager",
+      description: "Madddagudu Madhan",
+      price: 600,
+      categoryId: 2,
+      imageUrl: image2,
+      stock: 10,
+      size: "L",
+      type: "Cosplay",
+      color: "Black",
+      rating: 5.0,
+      isLiked: false,
+      originalPrice: 1500,
+      isOnSale: true,
+      discountPercentage: 20,
+      createdAt: DateTime.now(),
+    ),
+    ProductModel(
+      id: 2,
+      name: "Sakura Haruka",
+      description: "Madddagudu Madhan",
+      price: 600,
+      categoryId: 2,
+      imageUrl: image3,
+      stock: 10,
+      size: "L",
+      type: "Cosplay",
+      color: "Black",
+      rating: 5.0,
+      isLiked: false,
+      originalPrice: 1500,
+      isOnSale: true,
+      discountPercentage: 20,
+      createdAt: DateTime.now(),
+    ),
+    ProductModel(
+      id: 3,
+      name: "Micky",
+      description: "Madddagudu Madhan",
+      price: 600,
+      categoryId: 2,
+      imageUrl: image4,
+      stock: 10,
+      size: "L",
+      type: "Cosplay",
+      color: "Black",
+      rating: 5.0,
+      isLiked: false,
+      originalPrice: 1500,
+      isOnSale: true,
+      discountPercentage: 20,
+      createdAt: DateTime.now(),
+    ),
+    ProductModel(
+      id: 4,
+      name: "Gojo",
+      description: "Madddagudu Madhan",
+      price: 600,
+      categoryId: 2,
+      imageUrl: image5,
+      stock: 10,
+      size: "L",
+      type: "Cosplay",
+      color: "Black",
+      rating: 5.0,
+      isLiked: false,
+      originalPrice: 1500,
+      isOnSale: true,
+      discountPercentage: 20,
+      createdAt: DateTime.now(),
+    ),
+    ProductModel(
+      id: 5,
+      name: "Itachi",
+      description: "Madddagudu Madhan",
+      price: 600,
+      categoryId: 2,
+      imageUrl: image6,
+      stock: 10,
+      size: "L",
+      type: "Cosplay",
+      color: "Black",
+      rating: 5.0,
+      isLiked: false,
+      originalPrice: 1500,
+      isOnSale: true,
+      discountPercentage: 20,
+      createdAt: DateTime.now(),
+    ),
+  ];
 }
-
-List<Map<String, dynamic>> jsonModelData = [
-  {
-    "id": 1,
-    "name": "Geto",
-    "description": "Stylish party wear dress",
-    "price": 600,
-    "category_id": 2,
-    "image_url": image1,
-    "quantity": 10,
-    "size": "M",
-    "rating": 4.5,
-    "type": "Cosplay",
-    'originalPrice': 1000,
-    "color": "Red",
-    "is_on_sale": 1,
-    "discount_percentage": 20,
-    "created_at": "2025-04-01T12:00:00Z",
-  },
-  {
-    "id": 2,
-    "name": "Eren Yeager",
-    "description": "Stylish party wear dress",
-    "price": 600,
-    "category_id": 2,
-    "image_url": image2,
-    "quantity": 10,
-    "size": "M",
-    "rating": 4.5,
-    "type": "Cosplay",
-    'originalPrice': 1000,
-    "color": "Red",
-    "is_on_sale": 1,
-    "discount_percentage": 20,
-    "created_at": "2025-04-01T12:00:00Z",
-  },
-  {
-    "id": 3,
-    "name": "Sakura Haruka",
-    "description": "Stylish party wear dress",
-    "price": 600,
-    "category_id": 2,
-    "image_url": image3,
-    "quantity": 10,
-    "size": "M",
-    "rating": 4.5,
-    "type": "Cosplay",
-    'originalPrice': 1000,
-    "color": "Red",
-    "is_on_sale": 1,
-    "discount_percentage": 20,
-    "created_at": "2025-04-01T12:00:00Z",
-  },
-  {
-    "id": 4,
-    "name": "Micky",
-    "description": "Stylish party wear dress",
-    "price": 600,
-    "category_id": 2,
-    "image_url": image4,
-    "quantity": 10,
-    "size": "M",
-    "rating": 4.5,
-    "type": "Cosplay",
-    'originalPrice': 1000,
-    "color": "Red",
-    "is_on_sale": 1,
-    "discount_percentage": 20,
-    "created_at": "2025-04-01T12:00:00Z",
-  },
-  {
-    "id": 5,
-    "name": "Gojo",
-    "description": "Stylish party wear dress",
-    "price": 600,
-    "category_id": 2,
-    "image_url": image5,
-    "quantity": 10,
-    "size": "M",
-    "rating": 4.5,
-    "type": "Cosplay",
-    'originalPrice': 1000,
-    "color": "Red",
-    "is_on_sale": 1,
-    "discount_percentage": 20,
-    "created_at": "2025-04-01T12:00:00Z",
-  },
-  {
-    "id": 6,
-    "name": "Itachi",
-    "description": "Stylish party wear dress",
-    "price": 600,
-    "category_id": 2,
-    "image_url": image6,
-    "quantity": 10,
-    "size": "M",
-    "rating": 4.5,
-    "type": "Cosplay",
-    'originalPrice': "1000",
-    "color": "Red",
-    "is_on_sale": 1,
-    "discount_percentage": 20,
-    "created_at": "2025-04-01T12:00:00Z",
-  },
-];

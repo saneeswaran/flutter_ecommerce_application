@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:like_button/like_button.dart';
-
-import '../../../../../constants/constants.dart';
-import '../../../../../model/fake_model.dart';
+import 'package:provider/provider.dart';
+import '../../../../../model/product_model.dart';
+import '../../../../../providers/product_provider.dart';
+import '../../../../../widgets/custom_snack_bar.dart';
 import '../../../../product details/product_details_page.dart';
 
 class CustomGridTile extends StatelessWidget {
@@ -12,23 +13,25 @@ class CustomGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ProductProvider>(context);
+    final products = provider.items;
     Size size = MediaQuery.of(context).size;
-    return Container(child: _customcardsOfProduct(size, context, index: index));
+    return Container(
+      child: _customcardsOfProduct(
+        size,
+        context,
+        index: index,
+        products: products[index],
+      ),
+    );
   }
 
   Widget _customcardsOfProduct(
     Size size,
     BuildContext context, {
     required int index,
+    required ProductModel products,
   }) {
-    final List<String> networkImagesFortesting = [
-      image1,
-      image2,
-      image3,
-      image4,
-      image5,
-      image6,
-    ];
     return SizedBox(
       height: size.height * 0.36,
       width: size.width * 1,
@@ -49,12 +52,14 @@ class CustomGridTile extends StatelessWidget {
                       MaterialPageRoute(
                         builder:
                             (context) => ProductDetailsPage(
-                              imageUrl: networkImagesFortesting[index],
-                              name: testingfakeModel[index].name,
-                              color: testingfakeModel[index].color,
-                              price: testingfakeModel[index].price,
-                              rating: testingfakeModel[index].rating,
-                              description: testingfakeModel[index].description,
+                              id: products.id,
+                              imageUrl: products.imageUrl,
+                              color: products.color,
+                              name: products.name,
+                              price: products.price.toInt(),
+                              rating: products.rating.toDouble(),
+                              description: products.description,
+                              isLiked: products.isLiked,
                             ),
                       ),
                     );
@@ -68,16 +73,18 @@ class CustomGridTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                        image: NetworkImage(networkImagesFortesting[index]),
+                        image: NetworkImage(products.imageUrl),
                         fit: BoxFit.cover,
                       ),
                     ),
                     //inside the image content
-                    child: _insideTheImageWithDiscountAndFavourites(),
+                    child: _insideTheImageWithDiscountAndFavourites(
+                      product: products,
+                    ),
                   ),
                 ),
                 //price details
-                _priceDetails(size, context, index: index),
+                _priceDetails(size, context, index: index, products: products),
               ],
             ),
           ),
@@ -86,32 +93,49 @@ class CustomGridTile extends StatelessWidget {
     );
   }
 
-  Widget _insideTheImageWithDiscountAndFavourites() {
-    bool isClickedButton = false;
+  Widget _insideTheImageWithDiscountAndFavourites({
+    required ProductModel product,
+  }) {
     return Align(
       alignment: Alignment.topRight, // Positions at the top-right
       child: Container(
         width: 28, // Smaller background container
         height: 28, // Smaller background container
         margin: EdgeInsets.all(5), // Adds spacing from the edges
-        child: LikeButton(
-          animationDuration: const Duration(milliseconds: 400),
-          isLiked: isClickedButton,
-          size: 20,
-          circleColor: CircleColor(
-            start: Colors.grey.shade400,
-            end: Colors.grey.shade400,
-          ),
-          likeBuilder: (isLiked) {
-            isLiked = isClickedButton;
-            return null;
+        child: Consumer<ProductProvider>(
+          builder: (context, favourite, child) {
+            bool isFav = favourite.isFavCheck(product.id);
+            return LikeButton(
+              animationDuration: const Duration(milliseconds: 400),
+              isLiked: isFav,
+              size: 20,
+              circleColor: CircleColor(
+                start: Colors.grey.shade400,
+                end: Colors.grey.shade400,
+              ),
+              onTap: (liked) async {
+                if (liked) {
+                  favourite.removeFromFavourites(product.id);
+                  failedSnackBar(text: "successfully removed from favourites");
+                } else {
+                  favourite.addToFavourites(product);
+                  successSnackBar(text: "successfully added to favourites");
+                }
+                return !liked;
+              },
+            );
           },
         ),
       ),
     );
   }
 
-  Widget _priceDetails(Size size, BuildContext context, {required int index}) {
+  Widget _priceDetails(
+    Size size,
+    BuildContext context, {
+    required int index,
+    required ProductModel products,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
@@ -129,12 +153,9 @@ class CustomGridTile extends StatelessWidget {
               ),
             ],
           ),
+          Text(products.name, style: TextStyle(color: Colors.grey.shade400)),
           Text(
-            testingfakeModel[index].name,
-            style: TextStyle(color: Colors.grey.shade400),
-          ),
-          Text(
-            testingfakeModel[index].type,
+            products.type,
             style: TextStyle(
               color: Colors.black,
               fontSize: 16,
@@ -145,14 +166,14 @@ class CustomGridTile extends StatelessWidget {
             spacing: size.height * 0.02,
             children: [
               Text(
-                "${testingfakeModel[index].originalPrice}",
+                "${products.originalPrice}",
                 style: TextStyle(
                   color: Colors.grey.shade400,
                   decoration: TextDecoration.lineThrough,
                 ),
               ),
               Text(
-                '${testingfakeModel[index].price}',
+                '${products.price}',
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
             ],
