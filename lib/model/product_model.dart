@@ -9,6 +9,7 @@ class ProductModel {
   final int categoryId;
   final int stock;
   final String imageUrl;
+  final String category;
   int quantity;
   final String size;
   final String type;
@@ -26,6 +27,7 @@ class ProductModel {
     required this.price,
     required this.categoryId,
     required this.imageUrl,
+    required this.category,
     this.quantity = 1,
     required this.size,
     required this.stock,
@@ -51,6 +53,7 @@ class ProductModel {
       stock: stock,
       createdAt: createdAt,
       description: description,
+      category: category,
       discountPercentage: discountPercentage,
       isLiked: isLiked,
       isOnSale: isOnSale,
@@ -73,6 +76,7 @@ class ProductModel {
       'stock': stock,
       'size': size,
       'type': type,
+      'category': category,
       'color': color,
       'rating': rating,
       'isLiked': isLiked,
@@ -94,6 +98,7 @@ class ProductModel {
       quantity: map['quantity'] as int,
       size: map['size'] as String,
       type: map['type'] as String,
+      category: map['category'] as String,
       stock: map['stock'] as int,
       color: map['color'] as String,
       rating: map['rating'] as double,
@@ -121,6 +126,7 @@ class ProductModel {
       size: "L",
       type: "Cosplay",
       color: "Black",
+      category: "Men",
       rating: 5.0,
       isLiked: false,
       originalPrice: 1500,
@@ -139,6 +145,7 @@ class ProductModel {
       size: "L",
       type: "Cosplay",
       color: "Black",
+      category: "Men",
       rating: 5.0,
       isLiked: false,
       originalPrice: 1500,
@@ -157,6 +164,7 @@ class ProductModel {
       size: "L",
       type: "Cosplay",
       color: "Black",
+      category: "Men",
       rating: 5.0,
       isLiked: false,
       originalPrice: 1500,
@@ -174,6 +182,7 @@ class ProductModel {
       stock: 10,
       size: "L",
       type: "Cosplay",
+      category: "Men",
       color: "Black",
       rating: 5.0,
       isLiked: false,
@@ -192,6 +201,7 @@ class ProductModel {
       stock: 10,
       size: "L",
       type: "Cosplay",
+      category: "Men",
       color: "Black",
       rating: 5.0,
       isLiked: false,
@@ -210,6 +220,7 @@ class ProductModel {
       stock: 10,
       size: "L",
       type: "Cosplay",
+      category: "Men",
       color: "Black",
       rating: 5.0,
       isLiked: false,

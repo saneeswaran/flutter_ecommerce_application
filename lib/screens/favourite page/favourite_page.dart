@@ -1,7 +1,10 @@
+import 'package:cloth_ecommerce_application/constants/constants.dart';
 import 'package:cloth_ecommerce_application/providers/product_provider.dart';
+import 'package:cloth_ecommerce_application/screens/product%20details/product_details_page.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../shop page/tab bar/category/components/sort_by_dialogue.dart';
@@ -114,38 +117,57 @@ class _FavouritePageState extends State<FavouritePage> {
     );
   }
 
-  Container _favouriteList({
+  Widget _favouriteList({
     required Size size,
     required int index,
     required ProductProvider provider,
   }) {
-    return Container(
-      //outside container
-      margin: const EdgeInsets.all(10),
-      height: size.height * 0.15,
-      width: size.width * 1,
-      decoration: BoxDecoration(
-        //  color: Colors.red, --> for testing layouts
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // image container
-          Container(
-            height: size.height * 0.15,
-            width: size.width * 0.30,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(provider.favourite[index].imageUrl),
-                fit: BoxFit.contain,
-              ),
+    return GestureDetector(
+      onTap:
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => ProductDetailsPage(
+                    id: provider.favourite[index].id,
+                    imageUrl: provider.favourite[index].imageUrl,
+                    color: provider.favourite[index].color,
+                    name: provider.favourite[index].name,
+                    price: provider.favourite[index].price.toInt(),
+                    rating: provider.favourite[index].rating.toDouble(),
+                    description: provider.favourite[index].description,
+                    isLiked: provider.favourite[index].isLiked,
+                  ),
             ),
           ),
-          _productDetails(size: size, index: index, provider: provider),
-          _favouriteButton(size, provider: provider, index: index),
-        ],
+      child: Container(
+        //outside container
+        margin: const EdgeInsets.all(10),
+        height: size.height * 0.15,
+        width: size.width * 1,
+        decoration: BoxDecoration(
+          //  color: Colors.red, --> for testing layouts
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // image container
+            Container(
+              height: size.height * 0.15,
+              width: size.width * 0.30,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(provider.favourite[index].imageUrl),
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            _productDetails(size: size, index: index, provider: provider),
+            _favouriteButton(size, provider: provider, index: index),
+          ],
+        ),
       ),
     );
   }
@@ -246,7 +268,7 @@ class _FavouritePageState extends State<FavouritePage> {
           alignment: Alignment.topRight,
           child: IconButton(
             onPressed: () {
-              provider.favourite[index].quantity = 1;
+              provider.addToCart(provider.favourite[index]);
               successSnackBar(text: "Product added to cart successfully");
             },
             icon: Icon(Icons.shopping_cart),
@@ -260,11 +282,6 @@ class _FavouritePageState extends State<FavouritePage> {
   }
 
   Widget _noFavList() {
-    return Center(
-      child: Text(
-        "Product Like Pandra Skoothi",
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-      ),
-    );
+    return Center(child: SvgPicture.asset(noFavourites, fit: BoxFit.cover));
   }
 }

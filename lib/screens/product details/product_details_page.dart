@@ -70,7 +70,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   _sizeAndColorAndfavourites(product: products[widget.id]),
                   _productDetails(),
                   _description(),
-
                   //add to cart button
                   SizedBox(
                     height: size.height * 0.07,
@@ -82,9 +81,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         );
                         return CustomElevatedButton(
                           onPressed: () {
-                            if (!isInCart) {
-                              cart.addToCart(products[widget.id]);
-                            }
+                            if (!isInCart) cart.addToCart(products[widget.id]);
                           },
                           text: "Add to cart",
                         );

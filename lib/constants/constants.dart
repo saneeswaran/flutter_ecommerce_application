@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 const String googleSvgIcon = 'assets/vectors/google.svg';
 const String banner = 'assets/images/banner.png';
 const String streetCloths = 'assets/images/street banner.png';
+const String noFavourites = 'assets/vectors/no favourites.svg';
+const String noCart = 'assets/vectors/no cart.svg';
 
 //category local images
 const String newCategory = 'assets/images/new category.png';

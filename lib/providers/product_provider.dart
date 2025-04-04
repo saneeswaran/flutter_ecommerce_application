@@ -41,6 +41,14 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  double get totalPrice {
+    double total = 0.0;
+    for (var element in _cart) {
+      total += element.price * element.quantity;
+    }
+    return total;
+  }
+
   //favourites
 
   void addToFavourites(ProductModel product) {

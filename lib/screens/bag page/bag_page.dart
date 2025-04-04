@@ -4,6 +4,7 @@ import 'package:cloth_ecommerce_application/model/product_model.dart';
 import 'package:cloth_ecommerce_application/providers/product_provider.dart';
 import 'package:cloth_ecommerce_application/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class BagPage extends StatefulWidget {
@@ -33,12 +34,7 @@ class _BagPageState extends State<BagPage> {
         appBar: _appBar(),
         body:
             cart.isEmpty
-                ? Center(
-                  child: Text(
-                    "Product add pandra loosu koothi",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                )
+                ? _isEmptyCart()
                 : _bagProducts(size, cart: cart, provider: provider),
       ),
     );
@@ -135,7 +131,7 @@ class _BagPageState extends State<BagPage> {
             },
           ),
         ),
-        _totalAmountAndCheckOutButton(size),
+        _totalAmountAndCheckOutButton(size, provider: provider),
       ],
     );
   }
@@ -160,7 +156,12 @@ class _BagPageState extends State<BagPage> {
           ),
         ),
         _priceDetails(size, cart: cart, index: index, provider: provider),
-        _priceWithQuantityAndDelete(size, provider: provider, product: cart),
+        _priceWithQuantityAndDelete(
+          size,
+          provider: provider,
+          product: cart,
+          index: index,
+        ),
       ],
     );
   }
@@ -275,16 +276,19 @@ class _BagPageState extends State<BagPage> {
     );
   }
 
-  Widget _totalAmountAndCheckOutButton(Size size) {
+  Widget _totalAmountAndCheckOutButton(
+    Size size, {
+    required ProductProvider provider,
+  }) {
     return Container(
       padding: const EdgeInsets.all(8),
       height: size.height * 0.19,
       width: size.width * 1,
-      child: _totalAmount(size),
+      child: _totalAmount(size, provider: provider),
     );
   }
 
-  Widget _totalAmount(Size size) {
+  Widget _totalAmount(Size size, {required ProductProvider provider}) {
     return Column(
       spacing: size.height * 0.01,
       children: [
@@ -296,7 +300,7 @@ class _BagPageState extends State<BagPage> {
               style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
             ),
             Text(
-              "500",
+              provider.totalPrice.toString(),
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
@@ -314,7 +318,9 @@ class _BagPageState extends State<BagPage> {
     Size size, {
     required ProductProvider provider,
     required ProductModel product,
+    required int index,
   }) {
+    final price = provider.cart[index].price * provider.cart[index].quantity;
     return SizedBox(
       height: size.height * 0.15,
       width: size.width * 0.15,
@@ -334,9 +340,13 @@ class _BagPageState extends State<BagPage> {
               iconSize: 20,
             ),
           ),
-          Text("500", style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(price.toString(), style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
+  }
+
+  Widget _isEmptyCart() {
+    return Center(child: SvgPicture.asset(noCart, fit: BoxFit.cover));
   }
 }
