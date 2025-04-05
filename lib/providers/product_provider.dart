@@ -23,7 +23,7 @@ class ProductProvider extends ChangeNotifier {
     if (_cart[index].quantity < maxStock) {
       _cart[index] = _cart[index].copyWith(quantity: _cart[index].quantity + 1);
     } else {
-      failedSnackBar(text: "Stock limit reacher");
+      failedSnackBar(text: "Stock limit reached");
     }
     notifyListeners();
   }

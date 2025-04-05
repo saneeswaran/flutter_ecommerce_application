@@ -7,6 +7,7 @@ import 'package:flutter_rating/flutter_rating.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/colors.dart';
 import '../../widgets/custom_snack_bar.dart';
 import 'components/custom_drop_down.dart';
 
@@ -76,15 +77,19 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     width: size.width * 1,
                     child: Consumer<ProductProvider>(
                       builder: (context, cart, child) {
-                        final isInCart = cart.cart.any(
+                        bool alreadyInCart = cart.cart.any(
                           (element) => element.id == widget.id,
                         );
-                        return CustomElevatedButton(
-                          onPressed: () {
-                            if (!isInCart) cart.addToCart(products[widget.id]);
-                          },
-                          text: "Add to cart",
-                        );
+                        return alreadyInCart
+                            ? _nullButton(size: size)
+                            : CustomElevatedButton(
+                              onPressed: () {
+                                if (!alreadyInCart) {
+                                  cart.addToCart(products[widget.id]);
+                                }
+                              },
+                              text: "Add to cart",
+                            );
                       },
                     ),
                   ),
@@ -216,5 +221,25 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   Widget _description() {
     return Text(widget.description);
+  }
+
+  Widget _nullButton({required Size size}) {
+    return SizedBox(
+      height: size.height * 0.07,
+      width: size.width * 1,
+      child: ElevatedButton(
+        onPressed: null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: buttonColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        child: Text(
+          "Already in cart",
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+      ),
+    );
   }
 }
