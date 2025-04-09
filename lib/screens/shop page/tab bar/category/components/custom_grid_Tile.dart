@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:like_button/like_button.dart';
@@ -73,7 +74,7 @@ class CustomGridTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                        image: NetworkImage(products.imageUrl),
+                        image: CachedNetworkImageProvider(products.imageUrl),
                         fit: BoxFit.cover,
                       ),
                     ),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_ecommerce_application/providers/product_provider.dart';
 import 'package:cloth_ecommerce_application/screens/product%20details/product_details_page.dart';
 import 'package:flutter/material.dart';
@@ -13,13 +14,15 @@ class CustomListTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ProductProvider>(context);
-    final products = provider.items;
+    final product = provider.items;
+
     Size size = MediaQuery.of(context).size;
     return ListView.builder(
-      itemCount: products.length,
+      itemCount: product.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
+        final products = product[index];
         return GestureDetector(
           onTap: () {
             Navigator.push(
@@ -27,14 +30,14 @@ class CustomListTiles extends StatelessWidget {
               MaterialPageRoute(
                 builder:
                     (context) => ProductDetailsPage(
-                      id: products[index].id,
-                      color: products[index].color,
-                      description: products[index].description,
-                      imageUrl: products[index].imageUrl,
-                      name: products[index].name,
-                      isLiked: products[index].isLiked,
-                      price: products[index].price.toInt(),
-                      rating: products[index].rating,
+                      id: products.id,
+                      color: products.color,
+                      description: products.description,
+                      imageUrl: products.imageUrl,
+                      name: products.name,
+                      isLiked: products.isLiked,
+                      price: products.price.toInt(),
+                      rating: products.rating,
                     ),
               ),
             );
@@ -58,15 +61,15 @@ class CustomListTiles extends StatelessWidget {
                   width: size.width * 0.30,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(products[index].imageUrl),
+                      image: CachedNetworkImageProvider(products.imageUrl),
                       fit: BoxFit.contain,
                     ),
                   ),
                 ),
 
                 ///price details
-                _priceDetails(size, index: index, products: products[index]),
-                _favoriteButton(product: products[index], provider: provider),
+                _priceDetails(size, index: index, products: products),
+                _favoriteButton(product: products, provider: provider),
               ],
             ),
           ),

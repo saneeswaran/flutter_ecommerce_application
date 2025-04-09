@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_ecommerce_application/model/product_model.dart';
 import 'package:cloth_ecommerce_application/providers/product_provider.dart';
 import 'package:cloth_ecommerce_application/screens/shop%20page/tab%20bar/category/components/custom_grid_tile.dart';
@@ -56,7 +57,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               width: size.width * 1,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(widget.imageUrl),
+                  image: CachedNetworkImageProvider(widget.imageUrl),
                   fit: BoxFit.contain,
                 ),
               ),

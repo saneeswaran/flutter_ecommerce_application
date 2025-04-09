@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_ecommerce_application/constants/constants.dart';
 import 'package:cloth_ecommerce_application/core/colors.dart';
 import 'package:cloth_ecommerce_application/model/product_model.dart';
@@ -152,7 +153,9 @@ class _BagPageState extends State<BagPage> {
           width: size.width * 0.30,
           //image
           decoration: BoxDecoration(
-            image: DecorationImage(image: NetworkImage(cart.imageUrl)),
+            image: DecorationImage(
+              image: CachedNetworkImageProvider(cart.imageUrl),
+            ),
           ),
         ),
         _priceDetails(size, cart: cart, index: index, provider: provider),

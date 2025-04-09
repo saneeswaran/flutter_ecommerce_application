@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_ecommerce_application/constants/constants.dart';
 import 'package:cloth_ecommerce_application/model/product_model.dart';
 import 'package:cloth_ecommerce_application/screens/product%20details/product_details_page.dart';
@@ -150,7 +151,9 @@ class _HomePageState extends State<HomePage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                        image: NetworkImage(products[index].imageUrl),
+                        image: CachedNetworkImageProvider(
+                          products[index].imageUrl,
+                        ),
                         fit: BoxFit.cover,
                       ),
                     ),

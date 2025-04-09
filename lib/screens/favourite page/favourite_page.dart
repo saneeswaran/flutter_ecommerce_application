@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_ecommerce_application/constants/constants.dart';
 import 'package:cloth_ecommerce_application/providers/product_provider.dart';
 import 'package:cloth_ecommerce_application/screens/product%20details/product_details_page.dart';
@@ -122,6 +123,7 @@ class _FavouritePageState extends State<FavouritePage> {
     required int index,
     required ProductProvider provider,
   }) {
+    final favorite = provider.favourite[index];
     return GestureDetector(
       onTap:
           () => Navigator.push(
@@ -129,14 +131,14 @@ class _FavouritePageState extends State<FavouritePage> {
             MaterialPageRoute(
               builder:
                   (context) => ProductDetailsPage(
-                    id: provider.favourite[index].id,
-                    imageUrl: provider.favourite[index].imageUrl,
-                    color: provider.favourite[index].color,
-                    name: provider.favourite[index].name,
-                    price: provider.favourite[index].price.toInt(),
-                    rating: provider.favourite[index].rating.toDouble(),
-                    description: provider.favourite[index].description,
-                    isLiked: provider.favourite[index].isLiked,
+                    id: favorite.id,
+                    imageUrl: favorite.imageUrl,
+                    color: favorite.color,
+                    name: favorite.name,
+                    price: favorite.price.toInt(),
+                    rating: favorite.rating.toDouble(),
+                    description: favorite.description,
+                    isLiked: favorite.isLiked,
                   ),
             ),
           ),
@@ -159,7 +161,7 @@ class _FavouritePageState extends State<FavouritePage> {
               width: size.width * 0.30,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(provider.favourite[index].imageUrl),
+                  image: CachedNetworkImageProvider(favorite.imageUrl),
                   fit: BoxFit.contain,
                 ),
               ),
